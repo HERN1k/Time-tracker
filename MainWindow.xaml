@@ -1,0 +1,600 @@
+﻿<Window x:Class="Time_tracker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:local="clr-namespace:Time_tracker"
+        mc:Ignorable="d"
+        Title="Time tracker" 
+        Height="400" 
+        Width="600"
+        FontFamily="/Fonts/JetBrainsMono.ttf"
+        WindowState="Normal"
+        ResizeMode="NoResize" 
+        WindowStyle="None"
+        BorderThickness="1"
+        BorderBrush="#404040">
+    <Window.Resources>
+        <!--Tray-->
+        <Style TargetType="Border" x:Key="TrayToolTipBorderStyle">
+            <Setter Property="Background" Value="#FF2D2D2D" />
+            <Setter Property="BorderBrush" Value="#696969" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="6 2 6 2"/>
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="TextBlock" x:Key="TrayToolTipTextBlockStyle">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono.ttf" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Foreground" Value="#D3D3D3" />
+        </Style>
+        <!--MenuItem-->
+        <Style TargetType="MenuItem" x:Key="TrayMenuItemStyle">
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono.ttf" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Foreground" Value="#D3D3D3" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type MenuItem}">
+                        <Border x:Name="border" 
+                                Background="#FF2D2D2D"
+                                Padding="10 3 10 3">
+                            <ContentPresenter ContentSource="Header" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" 
+                                     Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#696969" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--ContextMenu-->
+        <Style TargetType="ContextMenu" x:Key="TrayContextMenuStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContextMenu}">
+                        <Border Background="#FF2D2D2D" 
+                                BorderBrush="#696969" 
+                                BorderThickness="1" 
+                                Padding="0 3 0 3"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+                            <StackPanel IsItemsHost="True" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle" Value="{StaticResource TrayMenuItemStyle}" />
+        </Style>
+
+        <!--Toolbar styles-->
+        <!--StackPanel toolbar-->
+        <Style TargetType="StackPanel" x:Key="StackPanelToolBarStyle">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+        <!--Movement button-->
+        <Style TargetType="TextBlock" x:Key="MovementButtonStyle">
+            <Setter Property="Background" Value="#FF2D2D2D" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Width" Value="550" />
+            <Setter Property="Text" Value="Time tracker" />
+            <Setter Property="TextAlignment" Value="Left" />
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono.ttf" />
+            <Setter Property="Foreground" Value="#D3D3D3" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Padding" Value="10 3 0 3" />
+        </Style>
+        <!--Buttons toolbar button-->
+        <Style TargetType="Button" x:Key="ButtonsToolbarStyle">
+            <Setter Property="Background" Value="#FF2D2D2D"/>
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Width" Value="24" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono.ttf" />
+            <Setter Property="Foreground" Value="#B2000000" />
+        </Style>
+        <!--Hide button-->
+        <Style TargetType="Button" x:Key="HideButtonStyle" BasedOn="{StaticResource ButtonsToolbarStyle}">
+            <Setter Property="Content" Value="-" />
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono.ttf"/>
+            <Setter Property="Foreground" Value="#D3D3D3"/>
+            <Setter Property="Margin" Value="1 0 1 0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#ADD8E6"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!--Exit button-->
+        <Style TargetType="Button" x:Key="ExitButtonStyle" BasedOn="{StaticResource ButtonsToolbarStyle}">
+            <Setter Property="Content" Value="x"/>
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono.ttf"/>
+            <Setter Property="Foreground" Value="#D3D3D3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#DC143C"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!--Clock styles-->
+        <!--Border day clock-->
+        <Style TargetType="Border" x:Key="BorderClockDayStyle">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="Margin" Value="225,45,225,275"/>
+        </Style>
+        <!--Text day block-->
+        <Style TargetType="TextBlock" x:Key="TextBlockClockDayStyle">
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono-Italic.ttf"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="FontWeight" Value="ExtraLight"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#D3D3D3"/>
+            <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+        <!--Border clock-->
+        <Style TargetType="Border" x:Key="BorderClockStyle">
+            <Setter Property="Height" Value="150"/>
+            <Setter Property="Width" Value="500"/>
+        </Style>
+        <!--Text block-->
+        <Style TargetType="TextBlock" x:Key="TextBlockClockStyle">
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono-Italic.ttf"/>
+            <Setter Property="FontSize" Value="100"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#D3D3D3"/>
+            <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+        <!--Hamburger styles-->
+        <Style TargetType="ToggleButton" x:Key="ToggleButtonHamburgerStyle">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="Width" Value="26"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="{x:Null}"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Opacity" Value="0.4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--Player styles-->
+        <!--Button player-->
+        <Style TargetType="Image" x:Key="PlayerButtonStyle">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Opacity" Value="0.4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality"/>
+        </Style>
+        <!--Button refresh-->
+        <Style TargetType="ToggleButton" x:Key="PlayerRefreshButtonStyle">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Image" x:Key="PlayerRefreshIconStyle">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Opacity" Value="0.4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality"/>
+        </Style>
+        <!--Popup refresh-->
+        <Style TargetType="Border" x:Key="PopupRefreshBorder">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Background" Value="#FF2D2D2D"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="BorderBrush" Value="#404040"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="PopupRefreshTextBlock">
+            <Setter Property="Width" Value="180"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono.ttf"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="#D3D3D3"/>
+        </Style>
+        <Style TargetType="Grid" x:Key="PopupRefreshGrid">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="180"/>
+        </Style>
+        <Style TargetType="Button" x:Key="PopupRefreshButton">
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Background" Value="Gray"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono.ttf"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="#D3D3D3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF3A3A3A"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!--Button save-->
+        <Style TargetType="ToggleButton" x:Key="PlayerSaveButtonStyle">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Image" x:Key="PlayerSaveIconStyle">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Opacity" Value="0.4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality"/>
+        </Style>
+        <!--Popup save-->
+        <Style TargetType="Border" x:Key="PopupSaveBorder">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Background" Value="#FF2D2D2D"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="BorderBrush" Value="#404040"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="PopupSaveTextBlock">
+            <Setter Property="Width" Value="180"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono.ttf"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="#D3D3D3"/>
+        </Style>
+        <Style TargetType="Grid" x:Key="PopupSaveGrid">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="180"/>
+        </Style>
+        <Style TargetType="Button" x:Key="PopupSaveButton">
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Background" Value="Gray"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono.ttf"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="#D3D3D3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF3A3A3A"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!--Hamburger-->
+        <Style TargetType="Border" x:Key="HamburgerBorderStyle">
+            <Setter Property="Padding" Value="0 5 0 5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#404040"/>
+            <Setter Property="Background" Value="#FF2D2D2D"/>
+        </Style>
+        <Style TargetType="Button" x:Key="HamburgerButtonStyle">
+            <Setter Property="Background" Value="#FF2D2D2D"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                Padding="10 5 10 5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#696969" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="StackPanel" x:Key="HamburgerStackPanelStyle">
+            <Setter Property="Orientation" Value="Horizontal"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="150"/>
+        </Style>
+        <Style TargetType="Image" x:Key="HamburgerImageStyle">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Width" Value="35"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="HamburgerTextBlockStyle">
+            <Setter Property="FontFamily" Value="/Fonts/JetBrainsMono.ttf"/>
+            <Setter Property="FontWeight" Value="DemiBold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+    </Window.Resources>
+    <!--Main root-->
+    <Grid x:Name="MainRoot" Background="#FF232323">
+        <!--Tray-->
+        <tb:TaskbarIcon x:Name="taskbarIcon"
+                        IconSource="/Src/Icons/AppIcon_32.ico"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Visibility="Hidden"
+                        TrayLeftMouseDown="TrayLeftMouseDown_Click"
+                        MenuActivation="RightClick">
+            <tb:TaskbarIcon.TrayToolTip>
+                <Border Style="{StaticResource TrayToolTipBorderStyle}">
+                    <TextBlock x:Name="TrayToolTipTextBlock"
+                               Style="{StaticResource TrayToolTipTextBlockStyle}"/>
+                </Border>
+            </tb:TaskbarIcon.TrayToolTip>
+
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu StaysOpen="False"
+                             Style="{StaticResource TrayContextMenuStyle}">
+                    <MenuItem x:Name="TaskbarIconContextMenuItem_1"
+                              Header="Play" 
+                              Click="PlayPouseTray_Click"/>
+                    <MenuItem Header="Reset" 
+                              Click="RefreshTray_Click"/>
+                    <MenuItem Header="Save" 
+                              Click="SaveTray_Click"/>
+                    <MenuItem Header="Statistics"
+                              Click="StatisticsWindow_Click"/>
+                    <MenuItem Header="Exit" 
+                              Click="ExitTray_Click"/>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+
+        </tb:TaskbarIcon>
+        <!--Toolbar-->
+        <StackPanel Style="{StaticResource StackPanelToolBarStyle}">
+            <TextBlock x:Name="buttonMovement"
+                       Style="{StaticResource MovementButtonStyle}"
+                       MouseLeftButtonDown="DragBlock"/>
+            <Button x:Name="HideButton"
+                    Click="HideButton_Click"
+                    Style="{StaticResource HideButtonStyle}"/>
+            <Button x:Name="ExitButton" 
+                    Click="ExitButton_Click"
+                    Style="{StaticResource ExitButtonStyle}"/>
+        </StackPanel>
+        <!--Clock-->
+        <Border Style="{StaticResource BorderClockDayStyle}">
+            <TextBlock x:Name="ClockTextDay"
+                       Style="{StaticResource TextBlockClockDayStyle}"/>
+        </Border>
+        <Border Style="{StaticResource BorderClockStyle}">
+            <TextBlock x:Name="ClockText"
+                       Style="{StaticResource TextBlockClockStyle}"/>
+        </Border>
+        <!--Player-->
+        <Grid Height="60"
+              Width="400" 
+              Margin="100,300,100,40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Image x:Name="PlayPouseButton"
+                   Source="/Src/Icons/Play.png"
+                   Grid.Column="0"
+                   MouseLeftButtonDown="HandlePlayPouse"
+                   Style="{StaticResource PlayerButtonStyle}"
+                   RenderOptions.BitmapScalingMode="HighQuality"/>
+            <ToggleButton x:Name="RefreshButton"
+                          Grid.Column="1"
+                          Style="{StaticResource PlayerRefreshButtonStyle}">
+                <StackPanel>
+                    <Image Source="/Src/Icons/Refresh.png"
+                           Style="{StaticResource PlayerRefreshIconStyle}"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Popup x:Name="refreshPopup" 
+                           IsOpen="{Binding IsChecked, ElementName=RefreshButton}" 
+                           StaysOpen="False"
+                           Placement="Center">
+                        <Border Style="{StaticResource PopupRefreshBorder}">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Style="{StaticResource PopupRefreshTextBlock}"
+                                           Text="Reset?"/>
+                                <Grid Style="{StaticResource PopupRefreshGrid}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Style="{StaticResource PopupRefreshButton}"
+                                            Grid.Column="0"
+                                            Content="Yas"
+                                            Click="HandleRefresh"/>
+                                    <Button Style="{StaticResource PopupRefreshButton}"
+                                            x:Name="RefreshClosePopup"
+                                            Grid.Column="1"
+                                            Content="No"
+                                            Click="ClosePopup"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
+                </StackPanel>
+            </ToggleButton>
+            <ToggleButton Style="{StaticResource PlayerSaveButtonStyle}"
+                          Grid.Column="2"
+                          x:Name="SaveButton">
+                <StackPanel>
+                    <Image Style="{StaticResource PlayerSaveIconStyle}"
+                           Source="/Src/Icons/Save.png"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Popup x:Name="savePopup" 
+                           IsOpen="{Binding IsChecked, ElementName=SaveButton}" 
+                           StaysOpen="False"
+                           Placement="Center">
+                        <Border Style="{StaticResource PopupSaveBorder}">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Style="{StaticResource PopupSaveTextBlock}"
+                                           Text="Save?"/>
+                                <Grid Style="{StaticResource PopupSaveGrid}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Style="{StaticResource PopupSaveButton}"
+                                            Grid.Column="0"
+                                            Content="Yas"
+                                            Click="HandleSave"/>
+                                    <Button Style="{StaticResource PopupSaveButton}"
+                                            x:Name="SaveClosePopup"
+                                            Grid.Column="1"
+                                            Content="No"
+                                            Click="ClosePopup"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
+                </StackPanel>
+            </ToggleButton>
+        </Grid>
+        <!--Hamburger-->
+        <ToggleButton x:Name="Hamburger"
+                Style="{StaticResource ToggleButtonHamburgerStyle}">
+            <StackPanel>
+                <Image RenderOptions.BitmapScalingMode="HighQuality"
+                       x:Name="HamburgerButton" 
+                       Source="/Src/Icons/Hamburger.png"/>
+                <Popup x:Name="HamburgerPopup"
+                       IsOpen="{Binding IsChecked, ElementName=Hamburger}"
+                       StaysOpen="False"
+                       Placement="Top">
+                    <Border Style="{StaticResource HamburgerBorderStyle}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Button Style="{StaticResource HamburgerButtonStyle}"
+                                    Grid.Row="0">
+                                <StackPanel Style="{StaticResource HamburgerStackPanelStyle}">
+                                    <Image Style="{StaticResource HamburgerImageStyle}"
+                                           Source="/Src/Icons/Statistics.png"
+                                           RenderOptions.BitmapScalingMode="HighQuality"
+                                           MouseLeftButtonDown="StatisticsWindow"/>
+                                    <TextBlock Style="{StaticResource HamburgerTextBlockStyle}"
+                                               Text="Statistics"
+                                               MouseLeftButtonDown="StatisticsWindow"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource HamburgerButtonStyle}"
+                                    Grid.Row="1">
+                                <StackPanel Style="{StaticResource HamburgerStackPanelStyle}">
+                                    <Image Style="{StaticResource HamburgerImageStyle}"
+                                           Source="/Src/Icons/Github-mark-white.png"
+                                           RenderOptions.BitmapScalingMode="HighQuality"
+                                           MouseLeftButtonDown="GitHub"/>
+                                    <TextBlock Style="{StaticResource HamburgerTextBlockStyle}"
+                                               Text="GitHub"
+                                               MouseLeftButtonDown="GitHub"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Border>
+                </Popup>
+            </StackPanel>
+        </ToggleButton>
+    </Grid>
+</Window>

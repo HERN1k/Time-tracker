@@ -1,0 +1,108 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>Time_tracker</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>src\icons\AppIcon.ico</ApplicationIcon>
+	  
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Fonts\JetBrainsMono-Italic.ttf" />
+    <None Remove="Fonts\JetBrainsMono-Light.ttf" />
+    <None Remove="Fonts\JetBrainsMono-Medium.ttf" />
+    <None Remove="Fonts\JetBrainsMono-Regular.ttf" />
+    <None Remove="Fonts\JetBrainsMono.ttf" />
+    <None Remove="hamburger_256.png" />
+    <None Remove="pause_button.png" />
+    <None Remove="play-button.png" />
+    <None Remove="refresh_button.png" />
+    <None Remove="save_2.png" />
+    <None Remove="Src\Icons\AppIcon.ico" />
+    <None Remove="Src\Icons\AppIcon_32.ico" />
+    <None Remove="Src\Icons\github-mark-white.png" />
+    <None Remove="Src\Icons\github-mark.png" />
+    <None Remove="Src\Icons\github.png" />
+    <None Remove="Src\Icons\Hamburger.png" />
+    <None Remove="Src\Icons\MainIcon.ico" />
+    <None Remove="Src\Icons\MainIcon.png" />
+    <None Remove="Src\Icons\MainIcon.svg" />
+    <None Remove="Src\Icons\MainIcon_32.ico" />
+    <None Remove="Src\Icons\Pause.png" />
+    <None Remove="Src\Icons\play-button.png" />
+    <None Remove="Src\Icons\Play.png" />
+    <None Remove="Src\Icons\Refresh.png" />
+    <None Remove="Src\Icons\Save.png" />
+    <None Remove="Src\Icons\save_256.png" />
+    <None Remove="Src\Icons\statistics.png" />
+    <None Remove="Src\Icons\system.ico" />
+    <None Remove="Src\Icons\TimeTracker.png" />
+    <None Remove="Src\Icons\TimeTracker_128.ico" />
+    <None Remove="Src\Icons\TimeTracker_32.ico" />
+    <None Remove="Src\Icons\TimeTracker_48.ico" />
+    <None Remove="Src\Icons\TimeTracker_64.ico" />
+    <None Remove="Src\Icons\TimeTracker_72.ico" />
+    <None Remove="Src\Icons\TimeTracker_96.ico" />
+    <None Remove="system.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="src\icons\AppIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Fonts\JetBrainsMono-Italic.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Src\Icons\AppIcon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Src\Icons\AppIcon_32.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+    <PackageReference Include="ilmerge" Version="3.0.41" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Src\Icons\Github-mark-white.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Src\Icons\Hamburger.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Src\Icons\Pause.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Src\Icons\Play.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Src\Icons\Refresh.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Src\Icons\Save.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Src\Icons\Statistics.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="AssemblyInfo.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
+</Project>
